@@ -4,3 +4,8 @@ class PositionalPosting:
         self.document_index_dict = {}
         self.document_frequency_dict = {}
         self.unique_documents_frequency = 0
+
+
+positional_postings_lists = []
+def create_positional_postings_lists(data_frame):
+    print('')
