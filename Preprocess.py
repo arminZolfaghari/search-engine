@@ -1,7 +1,6 @@
 import pandas as pd
 from hazm import *
 from DictList import *
-import copy
 # from __future__ import unicode_literals
 import DictList
 
@@ -11,12 +10,11 @@ stemmer = Stemmer()
 
 
 def save_data_frame_to_file(data_frame):
-    print()
+    data_frame.to_excel("df_after_preprocess_without_stop_words.xlsx")
 
 
-def read_data_from_file(file_name):
+def read_data_from_file(file_name=FILE_NAME):
     data_frame = pd.read_excel(file_name, sheet_name='Sheet1', usecols="A,C")
-    # print(data_frame)
     return data_frame
 
 
@@ -42,14 +40,11 @@ def stem(words_dict):
     :param words_dict: dictionary of words with index
     :return new_words_dict: return dictionary of words stem with index
     """
-    new_words_dict = copy.deepcopy(words_dict)
+    new_words_dict = DictList.DictList()
     for key, value in words_dict.items():
         word_stem = stemmer.stem(key)
-        if word_stem == key:
-            continue
-
-        del new_words_dict[key]
-        new_words_dict[word_stem] = value[0]
+        for i in range(len(value)):
+            new_words_dict[word_stem] = value[i]
 
     return new_words_dict
 
@@ -60,15 +55,15 @@ def remove_stop_words(words_dict):
     :return new_words_dict: return dictionary of words with index and without stop words
     """
 
-    new_words_dict = copy.deepcopy(words_dict)
-    for key in words_dict:
-        if key in stopwords_list():
-            del new_words_dict[key]
+    stop_words = list(set(stopwords_list()).intersection(list(words_dict)))
+    # new_words_dict = copy.deepcopy(words_dict)
+    for word in stop_words:
+        del words_dict[word]
 
-    return new_words_dict
+    return words_dict
 
 
-def preprocess(data_frame, remove_stop_words_flag=False):
+def preprocess(data_frame, remove_stop_words_flag=False, stem_flag=False):
     new_data_frame = data_frame
 
     # step1: Normalize
@@ -76,18 +71,39 @@ def preprocess(data_frame, remove_stop_words_flag=False):
 
     # step2: Tokenization
     new_data_frame['tokens'] = new_data_frame['content'].apply(tokenize)
-    # print(new_data_frame["tokens"][0]['مسلم'])
+    # print(new_data_frame["tokens"][5])
 
     # step3: Stemming
-    new_data_frame['tokens'] = new_data_frame['tokens'].apply(stem)
-    print(len(new_data_frame["tokens"][0]))
+    if stem_flag:
+        new_data_frame['tokens'] = new_data_frame['tokens'].apply(stem)
+    # print(new_data_frame["tokens"][5])
 
+    # print(len(new_data_frame["tokens"][0]))
     # step4: Stop words
     if remove_stop_words_flag:
         new_data_frame['tokens'] = new_data_frame['tokens'].apply(remove_stop_words)
-        print(len(new_data_frame["tokens"][0]))
+        # print(len(new_data_frame["tokens"][0]))
+
+    return new_data_frame
+
+
+def preprocess_word(word):
+    # step1: Normalize
+    new_word = normalizer.normalize(word)
+
+    # step3: Stemming
+    new_word = stemmer.stem(new_word)
+
+    return new_word
+
+
+def get_data_frame_after_preprocess(remove_stop_words_flag, stem_flag):
+    data_frame = read_data_from_file(FILE_NAME)
+    return preprocess(data_frame, remove_stop_words_flag, stem_flag)
 
 
 if __name__ == "__main__":
-    df = read_data_from_file(FILE_NAME)
-    preprocess(df)
+    print()
+    df = read_data_from_file()
+    data_frame_after_preprocess = preprocess(df)
+    save_data_frame_to_file(data_frame_after_preprocess)
