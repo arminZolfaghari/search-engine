@@ -87,6 +87,24 @@ def preprocess(data_frame, remove_stop_words_flag=False, stem_flag=False):
     return new_data_frame
 
 
+def preprocess_query(query, remove_stop_words_flag=False, stem_flag=False):
+    # step1: Normalize
+    normalize_query = normalize(query)
+
+    # step2: Tokenization
+    query_tokens_dict = tokenize(normalize_query)
+
+    # step3: Stemming
+    if stem_flag:
+        query_tokens_dict = stem(query_tokens_dict)
+
+    # step4: Stop words
+    if remove_stop_words_flag:
+        query_tokens_dict = remove_stop_words(query_tokens_dict)
+
+    return query_tokens_dict
+
+
 def preprocess_word(word):
     # step1: Normalize
     new_word = normalizer.normalize(word)

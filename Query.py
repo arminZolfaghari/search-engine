@@ -9,12 +9,13 @@ MAIN_FILE_NAME = "./IR1_7k_news.xlsx"
 
 def load_positional_postings_list(file_name):
     with open(file_name, 'r', encoding='utf-8') as fp:
-        positional_postings_list_json = json.load(fp)
+        positional_postings_lists_json = json.load(fp)
         # print(positional_postings_list_json)
-        global positional_postings_list
-        positional_postings_list = positional_postings_list_json
+        global positional_postings_lists
+        positional_postings_lists = positional_postings_lists_json
         # print(type(positional_postings_list))
-    return positional_postings_list
+    return positional_postings_lists
+
 
 def print_result(doc_id_list):
     data_frame = read_data_from_file(MAIN_FILE_NAME)
@@ -28,8 +29,7 @@ def print_result(doc_id_list):
 def search_word(word):
     # preprocess
     new_word = preprocess_word(word)
-    # print(" 22 :", positional_postings_list)
-    inf_about_word = positional_postings_list[new_word]
+    inf_about_word = positional_postings_lists[new_word]
     number_of_documents = inf_about_word['unique_documents_frequency']
     document_frequency_dict = inf_about_word['document_frequency_dict']
     doc_id_list = [*document_frequency_dict]
@@ -40,13 +40,12 @@ def search_word(word):
 def find_docs_intersection(words_list):
     docs_id_lists = []
     for word in words_list:
-        inf_about_word = positional_postings_list[word]
+        inf_about_word = positional_postings_lists[word]
         document_frequency_dict = inf_about_word['document_frequency_dict']
         docs_id_list = [*document_frequency_dict]
         docs_id_lists.append(docs_id_list)
 
     docs_id_intersection_list = docs_id_lists[0]
-    # print(docs_id_lists)
     for i in range(1, len(docs_id_lists)):
         docs_id_intersection_list = list(set(docs_id_intersection_list) & set(docs_id_lists[i]))
 
@@ -56,15 +55,14 @@ def find_docs_intersection(words_list):
 def check_words_index(words_list, docs_id_intersection):
     result_docs_id_lists = []
     for doc_id in docs_id_intersection:
-        inf_about_word = positional_postings_list[words_list[0]]
-        # print("doc id: ", doc_id, " word ", words_list[0], " ", inf_about_word["document_index_dict"][doc_id])
+        inf_about_word = positional_postings_lists[words_list[0]]
+
         for index in inf_about_word["document_index_dict"][doc_id]:
-            # print(type(index))
+
             flag = True
             for i in range(1, len(words_list)):
-                inf_about_next_word = positional_postings_list[words_list[i]]
+                inf_about_next_word = positional_postings_lists[words_list[i]]
                 if int(int(index) + i) not in inf_about_next_word["document_index_dict"][doc_id]:
-                    # print(str(int(index) + i) , " not in ", inf_about_next_word["document_index_dict"][doc_id], " word: ", words_list[i])
                     flag = False
                     break
 
