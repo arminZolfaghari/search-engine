@@ -1,14 +1,14 @@
 import json
 import math
 import copy
-from Query import load_positional_postings_list
+from PositionalPosting import load_positional_postings_list
 from Preprocess import read_data_from_file, preprocess_query
 from PositionalPosting import POSITIONAL_POSTINGS_LIST_FILE_WITHOUT_STOP_WORDS, \
     POSITIONAL_POSTINGS_LIST_FILE_WITH_STOP_WORDS, DF_WITH_STOP_WORDS
 
 positional_postings_lists_with_stop_words = load_positional_postings_list(POSITIONAL_POSTINGS_LIST_FILE_WITH_STOP_WORDS)
-positional_postings_list_without_stop_words = load_positional_postings_list(
-    POSITIONAL_POSTINGS_LIST_FILE_WITHOUT_STOP_WORDS)
+# positional_postings_list_without_stop_words = load_positional_postings_list(
+#     POSITIONAL_POSTINGS_LIST_FILE_WITHOUT_STOP_WORDS)
 
 positional_postings_lists = positional_postings_lists_with_stop_words
 number_of_all_documents = len(read_data_from_file(DF_WITH_STOP_WORDS))
@@ -35,7 +35,7 @@ def calculate_inverse_document_frequency(term):
     :return: idf
     """
     # dft
-    document_freq_of_term = positional_postings_lists[term]["unique_document_frequency"]
+    document_freq_of_term = positional_postings_lists[term]["unique_documents_frequency"]
     # N
     number_of_documents = len(positional_postings_lists)
     inverse_document_frequency = math.log10(number_of_documents / document_freq_of_term)

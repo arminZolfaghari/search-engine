@@ -1,13 +1,12 @@
-from Query import load_positional_postings_list
-from VectorSpace import load_vectors_list
+from PositionalPosting import load_positional_postings_list
+from VectorSpace import load_vectors_list, positional_postings_lists
 
 POSITIONAL_POSTINGS_LIST_FILE_WITH_STOP_WORDS = "./positional_postings_lists_with_stop_words.json"
 VECTORS_WITHOUT_STOP_WORDS_LIST = "./vectors_without_stop_words.json"
 vectors_list = load_vectors_list(VECTORS_WITHOUT_STOP_WORDS_LIST)
-positional_postings_lists = load_positional_postings_list(POSITIONAL_POSTINGS_LIST_FILE_WITH_STOP_WORDS)
 
 
-def final_result(query_vector, top_k, index_elimination_flag, champions_list_flag):
+def final_search_result(query_vector, top_k, index_elimination_flag, champions_list_flag):
     """
     return final top k list
     :param query_vector:
@@ -18,7 +17,7 @@ def final_result(query_vector, top_k, index_elimination_flag, champions_list_fla
     """
     sorted_document_score_with_query = calculate_document_score_with_query(query_vector, index_elimination_flag,
                                                                            champions_list_flag)
-    return sorted_document_score_with_query[top_k]
+    return list(sorted_document_score_with_query.items())[0: top_k]
 
 
 def calculate_document_score_with_query(query_vector, index_elimination_flag=False, champions_list_flag=False):
@@ -30,7 +29,7 @@ def calculate_document_score_with_query(query_vector, index_elimination_flag=Fal
 
     document_id_score_dict = {}
     for document_id in documents_list:
-        score = cos_similarity(vectors_list(document_id), query_vector)
+        score = cos_similarity(vectors_list[document_id], query_vector)
         document_id_score_dict[document_id] = score
 
     sorted_document_id_score_dict = sort_doc_score_dict(document_id_score_dict)
@@ -63,7 +62,9 @@ def index_elimination(query_vector):
     for term in query_vector:
         documents_list = positional_postings_lists[term]["document_frequency_dict"].keys()
         # union of documents list has at least one term of the query
-        documents_list_after_index_elimination = list(set(documents_list + documents_list_after_index_elimination))
+        print(documents_list)
+        print(type(documents_list))
+        documents_list_after_index_elimination = list(set(list(documents_list) + documents_list_after_index_elimination))
 
     return documents_list_after_index_elimination
 
@@ -77,3 +78,4 @@ def get_champions_list():
 
 
 if __name__ == "__main__":
+    pass

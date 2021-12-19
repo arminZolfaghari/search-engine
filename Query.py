@@ -1,20 +1,12 @@
 from Preprocess import preprocess_word, read_data_from_file
 import json
 from collections import OrderedDict
+from VectorSpace import create_query_vector
+from Score import final_search_result
 
 POSITIONAL_POSTINGS_LIST_FILE_WITH_STOP_WORDS = "./positional_postings_lists_with_stop_words.json"
 POSITIONAL_POSTINGS_LIST_FILE_WITHOUT_STOP_WORDS = "./positional_postings_lists_without_stop_words.json"
 MAIN_FILE_NAME = "./IR1_7k_news.xlsx"
-
-
-def load_positional_postings_list(file_name):
-    with open(file_name, 'r', encoding='utf-8') as fp:
-        positional_postings_lists_json = json.load(fp)
-        # print(positional_postings_list_json)
-        global positional_postings_lists
-        positional_postings_lists = positional_postings_lists_json
-        # print(type(positional_postings_list))
-    return positional_postings_lists
 
 
 def print_result(doc_id_list):
@@ -109,6 +101,11 @@ def search_words(words):
 
 
 if __name__ == "__main__":
-    load_positional_postings_list(POSITIONAL_POSTINGS_LIST_FILE_WITH_STOP_WORDS)
-    arr = ["دانشگاه", "صنعتی", "امیرکبیر"]
-    search_words(arr)
+    # load_positional_postings_list(POSITIONAL_POSTINGS_LIST_FILE_WITH_STOP_WORDS)
+    # arr = ["دانشگاه", "صنعتی", "امیرکبیر"]
+    # search_words(arr)
+    print("Enter query:")
+    query_sentence = input()
+    query_vector = create_query_vector(query_sentence, False, True)
+    print(query_vector)
+    print(final_search_result(query_vector, 10, True, False))

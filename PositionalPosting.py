@@ -62,6 +62,16 @@ def save_positional_postings_lists():
         json.dump(positional_postings_lists_json, fp, sort_keys=True, indent=4, ensure_ascii=False)
 
 
+def load_positional_postings_list(file_name):
+    with open(file_name, 'r', encoding='utf-8') as fp:
+        positional_postings_lists_json = json.load(fp)
+        # print(positional_postings_list_json)
+        global positional_postings_lists
+        positional_postings_lists = positional_postings_lists_json
+        # print(type(positional_postings_list))
+    return positional_postings_lists
+
+
 if __name__ == "__main__":
     print("in p p")
     # data_frame_after_preprocess = read_data_from_file(NEW_FILE_NAME)
