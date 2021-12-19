@@ -1,20 +1,17 @@
 import json
 import math
 import copy
-
 from Query import load_positional_postings_list
 from Preprocess import read_data_from_file, preprocess_query
+from PositionalPosting import POSITIONAL_POSTINGS_LIST_FILE_WITHOUT_STOP_WORDS, \
+    POSITIONAL_POSTINGS_LIST_FILE_WITH_STOP_WORDS, DF_WITH_STOP_WORDS
 
-DF_WITH_STOP_WORDS = "./df_after_preprocess_with_stop_words.xlsx"
-DF_WITHOUT_STOP_WORDS = "./df_after_preprocess_without_stop_words.xlsx"
-POSITIONAL_POSTINGS_LIST_FILE_WITH_STOP_WORDS = "./positional_postings_lists_with_stop_words.json"
-POSITIONAL_POSTINGS_LIST_FILE_WITHOUT_STOP_WORDS = "./positional_postings_lists_without_stop_words.json"
+positional_postings_lists_with_stop_words = load_positional_postings_list(POSITIONAL_POSTINGS_LIST_FILE_WITH_STOP_WORDS)
+positional_postings_list_without_stop_words = load_positional_postings_list(
+    POSITIONAL_POSTINGS_LIST_FILE_WITHOUT_STOP_WORDS)
 
-
-# class VectorModel:
-#     def __init__(self, document_number, term_freq_dict):
-#         self.document_number = document_number
-#         self.term_freq = term_freq_dict
+positional_postings_lists = positional_postings_lists_with_stop_words
+number_of_all_documents = len(read_data_from_file(DF_WITH_STOP_WORDS))
 
 
 def calculate_term_freq_weight(term_freq_dict):
@@ -96,7 +93,7 @@ def calculate_final_weight(type, term_freq_raw):
     return calculate_term_freq_normalize(final_term_freq_weight)
 
 
-def create_vectors_list_from_postings_lists(positional_postings_lists, number_of_all_documents):
+def create_vectors_list_from_postings_lists():
     vectors_list = {}
     for i in range(number_of_all_documents):  # i is number of document
         term_freq_dict = {}
@@ -114,10 +111,11 @@ def save_vectors_list(vectors_list):
         json.dump(vectors_list, fp, sort_keys=True, indent=4, ensure_ascii=False)
 
 
-def create_vectors_list_from_data_frame(data_frame):
-    vectors_list = {}
-    for doc_id, row in data_frame.iterrows():
-        tokens_in_document = row['tokens']
+def load_vectors_list(file_name):
+    with open(file_name, 'r', encoding='utf-8') as fp:
+        vectors_list = json.load(fp)
+
+    return vectors_list
 
 
 def create_query_vector(query_string, remove_stop_words_flag, stem_flag):
@@ -128,7 +126,6 @@ def create_query_vector(query_string, remove_stop_words_flag, stem_flag):
     for term, positional_index in query_tokens_dict.items():
         query_term_freq_dict[term] = len(positional_index)
 
-
     # final term frequency
     query_final_term_frequency = calculate_final_weight("query", query_term_freq_dict)
 
@@ -136,9 +133,4 @@ def create_query_vector(query_string, remove_stop_words_flag, stem_flag):
 
 
 if __name__ == "__main__":
-    create_query_vector("به آیدین سلام برسون به آیدین", False, True)
-    global positional_postings_lists
-    positional_postings_list = load_positional_postings_list(POSITIONAL_POSTINGS_LIST_FILE_WITH_STOP_WORDS)
-    # df = read_data_from_file(DF_WITH_STOP_WORDS)
-    # vectors_list = create_vectors_list_from_postings_lists(positional_postings_list, len(df))
-    # save_vectors_list(vectors_list)
+    pass

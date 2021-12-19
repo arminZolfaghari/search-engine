@@ -63,6 +63,7 @@ def save_positional_postings_lists():
 
 
 if __name__ == "__main__":
+    print("in p p")
     # data_frame_after_preprocess = read_data_from_file(NEW_FILE_NAME)
     # print(type(data_frame_after_preprocess['tokens'][0]))
     data_frame_after_preprocess = get_data_frame_after_preprocess()
