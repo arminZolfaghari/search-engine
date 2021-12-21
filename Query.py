@@ -108,4 +108,4 @@ if __name__ == "__main__":
     query_sentence = input()
     query_vector = create_query_vector(query_sentence, False, True)
     print(query_vector)
-    print(final_search_result(query_vector, 10, True, False))
+    print(final_search_result(query_vector, 10, False, True))

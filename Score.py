@@ -6,6 +6,7 @@ from VectorSpace import load_vectors_list, positional_postings_lists
 CHAMPIONS_LIST_FILE = "./champions_list.json"
 POSITIONAL_POSTINGS_LIST_FILE_WITH_STOP_WORDS = "./positional_postings_lists_with_stop_words.json"
 VECTORS_WITHOUT_STOP_WORDS_LIST = "./vectors_without_stop_words.json"
+
 vectors_list = load_vectors_list(VECTORS_WITHOUT_STOP_WORDS_LIST)
 
 
@@ -25,13 +26,13 @@ def final_search_result(query_vector, top_k, index_elimination_flag, champions_l
 
 def calculate_document_score_with_query(query_vector, index_elimination_flag=False, champions_list_flag=False):
     if index_elimination_flag:
-        documents_list = index_elimination(query_vector)
+        related_documents_list = index_elimination(query_vector)
 
     if champions_list_flag:
-        pass
+        related_documents_list = get_related_documents_with_champions(query_vector)
 
     document_id_score_dict = {}
-    for document_id in documents_list:
+    for document_id in related_documents_list:
         score = cos_similarity(vectors_list[document_id], query_vector)
         document_id_score_dict[document_id] = score
 
@@ -73,6 +74,15 @@ def index_elimination(query_vector):
     return documents_list_after_index_elimination
 
 
+def get_related_documents_with_champions(query_vector):
+    related_documents = []
+    for term in query_vector:
+        documents_list = term_champions_dict[term]
+        related_documents = list(set(documents_list + related_documents))
+
+    return related_documents
+
+
 def create_champions_list():
     """
     for increase performance, we create champions list for all term in dictionary
@@ -105,6 +115,8 @@ def load_champions_list(file_name):
 
     return term_champions_dict
 
+
+term_champions_dict = load_champions_list(CHAMPIONS_LIST_FILE)
 
 if __name__ == "__main__":
     pass
