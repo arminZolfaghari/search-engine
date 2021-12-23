@@ -2,9 +2,7 @@ import ast
 import json
 import multiprocessing
 from Preprocess import read_data_from_file
-from numpy.linalg import norm
 import time
-import numpy as np
 from gensim.models import Word2Vec
 
 cores = multiprocessing.cpu_count()
@@ -52,13 +50,15 @@ def load_w2v_model(model_name):
 
 
 TRAINING_DATA = load_training_data(TRAINING_DATA_JSON)
-
-# w2v_300d = create_w2v_model(1, 5, 3
-# 00, 0.03, cores - 1)
+# w2v_300d = create_w2v_model(1, 5, 300, 0.03, cores - 1)
 # save_w2v_model(w2v_300d, "w2v_300d.model")
-w2v_model = load_w2v_model("w2v_300d.model")
+w2v_my_model = load_w2v_model("w2v_300d.model")
+w2v_hazm_model = load_w2v_model("./word2vec_model_hazm/w2v_150k_hazm_300_v2.model")
 
 if __name__ == "__main__":
     print(len(TRAINING_DATA[0]))
-    print((w2v_model.wv.most_similar('خبرگزار')))
-    print(w2v_model.wv[0])
+    print((w2v_my_model.wv.most_similar('خبرگزار')))
+    print(w2v_my_model.wv[0])
+
+    print((w2v_hazm_model.wv.most_similar('خبرگزار')))
+

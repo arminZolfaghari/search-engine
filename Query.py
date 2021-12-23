@@ -1,21 +1,27 @@
-from Preprocess import preprocess_word, read_data_from_file
+from Preprocess import preprocess_word, df_before_preprocess
 import json
 from collections import OrderedDict
 from VectorSpace import create_query_vector
 from Score import final_search_result
+from Analysis import check_doc_content_with_query
+from ANNEmbedding import final_search_result_in_embedding, create_query_vector_embedding
 
 POSITIONAL_POSTINGS_LIST_FILE_WITH_STOP_WORDS = "./positional_postings_lists_with_stop_words.json"
 POSITIONAL_POSTINGS_LIST_FILE_WITHOUT_STOP_WORDS = "./positional_postings_lists_without_stop_words.json"
-MAIN_FILE_NAME = "./IR1_7k_news.xlsx"
 
 
-def print_result(doc_id_list):
-    data_frame = read_data_from_file(MAIN_FILE_NAME)
-    for doc_id in doc_id_list[0: 10]:
-        print("doc id: ", doc_id)
-        title = data_frame['title'][int(doc_id)]
-        print("title: ", title)
-        print('******************************************')
+def print_result(query_vector, doc_id_score_list):
+    for doc_info in doc_id_score_list:
+        doc_id, doc_score = doc_info[0], doc_info[1]
+        print(f"doc id: {doc_id}, score: {doc_score}")
+        title = df_before_preprocess['title'][int(doc_id)]
+        print(f"title: {title}")
+        related_sentences_with_query_in_doc = check_doc_content_with_query(query_vector, doc_id)
+        print(f"---------- related sentences in this document ----------")
+        for sentence in related_sentences_with_query_in_doc:
+            print(f"sentence {related_sentences_with_query_in_doc.index(sentence) + 1}: {sentence}")
+        print('*********************************************************************')
+        print('*********************************************************************')
 
 
 def search_word(word):
@@ -104,8 +110,23 @@ if __name__ == "__main__":
     # load_positional_postings_list(POSITIONAL_POSTINGS_LIST_FILE_WITH_STOP_WORDS)
     # arr = ["دانشگاه", "صنعتی", "امیرکبیر"]
     # search_words(arr)
-    print("Enter query:")
-    query_sentence = input()
-    query_vector = create_query_vector(query_sentence, False, True)
-    print(query_vector)
-    print(final_search_result(query_vector, 10, False, True))
+    query_sentence = ""
+    while query_sentence != "-1":
+        print("Enter query:")
+        query_sentence = input()
+        query_vector = create_query_vector(query_sentence, False, True)
+        print(query_vector)
+        final_doc_score_list_in_tf_idf = final_search_result(query_vector, 10, True, False)
+        print("########## tf - idf ##########")
+        print(final_doc_score_list_in_tf_idf)
+        print_result(query_vector, final_doc_score_list_in_tf_idf)
+
+        print("########## W2V model (my model) ##########")
+        query_vector_embedding = create_query_vector_embedding(query_sentence, "my model")
+        final_doc_score_list_in_w2v = final_search_result_in_embedding(query_vector_embedding, 10)
+        print(final_doc_score_list_in_w2v)
+        print_result(query_vector, final_doc_score_list_in_w2v)
+
+        print("########## W2V model (hazm model) ##########")
+        query_vector_embedding = create_query_vector_embedding(query_sentence, "hazm model")
+        final_doc_score_list_in_w2v = fi

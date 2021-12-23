@@ -6,18 +6,21 @@ from DictList import *
 # from __future__ import unicode_literals
 import DictList
 
-FILE_NAME = "./IR1_7k_news.xlsx"
+MAIN_DF_FILE_NAME = "./IR1_7k_news.xlsx"
 normalizer = Normalizer()
 stemmer = Stemmer()
 
 
-def save_data_frame_to_file(data_frame):
-    data_frame.to_excel("training_data.xlsx")
-
-
-def read_data_from_file(file_name=FILE_NAME):
+def read_data_from_file(file_name=MAIN_DF_FILE_NAME):
     data_frame = pd.read_excel(file_name, sheet_name='Sheet1', usecols="A,C,D")
     return data_frame
+
+
+df_before_preprocess = read_data_from_file(MAIN_DF_FILE_NAME)
+
+
+def save_data_frame_to_file(data_frame):
+    data_frame.to_excel("training_data.xlsx")
 
 
 def normalize(sentence):
@@ -140,7 +143,7 @@ def preprocess_word(word):
 
 
 def get_data_frame_after_preprocess(type, remove_stop_words_flag, stem_flag):
-    data_frame = read_data_from_file(FILE_NAME)
+    data_frame = read_data_from_file(MAIN_DF_FILE_NAME)
     return preprocess(data_frame, type, remove_stop_words_flag, stem_flag)
 
 

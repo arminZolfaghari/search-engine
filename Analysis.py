@@ -1,21 +1,35 @@
 import copy
 import math
-from Query import *
 import matplotlib.pyplot as plt
-from Preprocess import *
+from Preprocess import stem, normalize, df_before_preprocess
 from PositionalPosting import create_positional_postings_lists
 
 POSITIONAL_POSTINGS_LIST_FILE_WITH_STOP_WORDS = "./positional_postings_lists_with_stop_words.json"
 POSITIONAL_POSTINGS_LIST_FILE_WITHOUT_STOP_WORDS = "./positional_postings_lists_without_stop_words.json"
-DF_FILE = "./IR1_7k_news.xlsx"
-
-df_before_preprocess = read_data_from_file(DF_FILE)
 
 
-def check_search_engine_result_with_doc(query_sentence, doc_id_result):
-    doc_content = df_before_preprocess["content"][doc_id_result]
+def check_doc_content_with_query(query_vector, doc_id_result):
+    """
+    check document content (that search engine result ) with query
+    and return related sentences
+    :param query_vector:
+    :param doc_id_result:
+    :return: related_sentences_in_doc
+    """
+    doc_content = df_before_preprocess["content"][int(doc_id_result)]
+    doc_content_normalize = normalize(doc_content)
+    doc_content_sentences_list = doc_content_normalize.split(".")
 
+    related_sentences_in_doc = []
+    for sentence in doc_content_sentences_list:
+        words_in_sentence = sentence.split(" ")
+        words_stem_in_sentence = stem(words_in_sentence, "non positional")
+        for term in query_vector:
+            if term in words_stem_in_sentence or term in words_in_sentence:
+                related_sentences_in_doc.append(sentence)
+                break
 
+    return related_sentences_in_doc
 
 
 def get_word_freq_dict_from_postings_lists(postings_lists):
@@ -141,14 +155,15 @@ def plot_heaps():
 
     number_of_tokens_with_stemming_in_all_documents, number_of_words_with_stemming_in_all_documents = calculate_tokens_and_words_number(
         df_after_preprocess_with_stemming)
-    number_of_tokens_without_stemming_in_all_documents, number_of_words_without_stemming_in_all_documents = calculate_tokens_and_words_number(df_after_preprocess_without_stemming)
+    number_of_tokens_without_stemming_in_all_documents, number_of_words_without_stemming_in_all_documents = calculate_tokens_and_words_number(
+        df_after_preprocess_without_stemming)
 
     print("with stemming")
-    print(f'all documents: number of words: {number_of_tokens_with_stemming_in_all_documents}, number of tokens: {number_of_words_with_stemming_in_all_documents}')
+    print(
+        f'all documents: number of words: {number_of_tokens_with_stemming_in_all_documents}, number of tokens: {number_of_words_with_stemming_in_all_documents}')
     print("without stemming")
     print(
         f'all documents: number of words: {number_of_tokens_without_stemming_in_all_documents}, number of tokens: {number_of_words_without_stemming_in_all_documents}')
-
 
 
 if __name__ == "__main__":
