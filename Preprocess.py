@@ -16,7 +16,7 @@ def save_data_frame_to_file(data_frame):
 
 
 def read_data_from_file(file_name=FILE_NAME):
-    data_frame = pd.read_excel(file_name, sheet_name='Sheet1', usecols="A,D")
+    data_frame = pd.read_excel(file_name, sheet_name='Sheet1', usecols="A,C,D")
     return data_frame
 
 
@@ -80,7 +80,6 @@ def remove_stop_words(words_dict, type):
         for word in stop_words:
             del words_dict[word]
 
-
     else:  # type = non positional
         for word in stop_words:
             words_dict.remove(word)
@@ -112,20 +111,20 @@ def preprocess(data_frame, type, remove_stop_words_flag=False, stem_flag=False):
     return new_data_frame
 
 
-def preprocess_query(query, remove_stop_words_flag=False, stem_flag=False):
+def preprocess_query(query, type, remove_stop_words_flag=False, stem_flag=False):
     # step1: Normalize
     normalize_query = normalize(query)
 
     # step2: Tokenization
-    query_tokens_dict = tokenize(normalize_query)
+    query_tokens_dict = tokenize(normalize_query, type)
 
     # step3: Stemming
     if stem_flag:
-        query_tokens_dict = stem(query_tokens_dict)
+        query_tokens_dict = stem(query_tokens_dict, type)
 
     # step4: Stop words
     if remove_stop_words_flag:
-        query_tokens_dict = remove_stop_words(query_tokens_dict)
+        query_tokens_dict = remove_stop_words(query_tokens_dict, type)
 
     return query_tokens_dict
 
@@ -140,9 +139,9 @@ def preprocess_word(word):
     return new_word
 
 
-def get_data_frame_after_preprocess(remove_stop_words_flag, stem_flag):
+def get_data_frame_after_preprocess(type, remove_stop_words_flag, stem_flag):
     data_frame = read_data_from_file(FILE_NAME)
-    return preprocess(data_frame, remove_stop_words_flag, stem_flag)
+    return preprocess(data_frame, type, remove_stop_words_flag, stem_flag)
 
 
 if __name__ == "__main__":

@@ -76,7 +76,7 @@ if __name__ == "__main__":
     print("in p p")
     # data_frame_after_preprocess = read_data_from_file(NEW_FILE_NAME)
     # print(type(data_frame_after_preprocess['tokens'][0]))
-    data_frame_after_preprocess = get_data_frame_after_preprocess()
+    data_frame_after_preprocess = get_data_frame_after_preprocess("positional", True, True)
     print(data_frame_after_preprocess)
     create_positional_postings_lists(data_frame_after_preprocess)
     save_positional_postings_lists()

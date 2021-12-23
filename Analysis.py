@@ -7,6 +7,15 @@ from PositionalPosting import create_positional_postings_lists
 
 POSITIONAL_POSTINGS_LIST_FILE_WITH_STOP_WORDS = "./positional_postings_lists_with_stop_words.json"
 POSITIONAL_POSTINGS_LIST_FILE_WITHOUT_STOP_WORDS = "./positional_postings_lists_without_stop_words.json"
+DF_FILE = "./IR1_7k_news.xlsx"
+
+df_before_preprocess = read_data_from_file(DF_FILE)
+
+
+def check_search_engine_result_with_doc(query_sentence, doc_id_result):
+    doc_content = df_before_preprocess["content"][doc_id_result]
+
+
 
 
 def get_word_freq_dict_from_postings_lists(postings_lists):

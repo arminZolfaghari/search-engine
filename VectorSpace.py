@@ -6,11 +6,13 @@ from Preprocess import read_data_from_file, preprocess_query
 from PositionalPosting import POSITIONAL_POSTINGS_LIST_FILE_WITHOUT_STOP_WORDS, \
     POSITIONAL_POSTINGS_LIST_FILE_WITH_STOP_WORDS, DF_WITH_STOP_WORDS
 
-positional_postings_lists_with_stop_words = load_positional_postings_list(POSITIONAL_POSTINGS_LIST_FILE_WITH_STOP_WORDS)
-# positional_postings_list_without_stop_words = load_positional_postings_list(
-#     POSITIONAL_POSTINGS_LIST_FILE_WITHOUT_STOP_WORDS)
+VECTORS_WITHOUT_STOP_WORDS_FILE = "./vectors_without_stop_words.json"
 
-positional_postings_lists = positional_postings_lists_with_stop_words
+# positional_postings_lists_with_stop_words = load_positional_postings_list(POSITIONAL_POSTINGS_LIST_FILE_WITH_STOP_WORDS)
+positional_postings_list_without_stop_words = load_positional_postings_list(
+    POSITIONAL_POSTINGS_LIST_FILE_WITHOUT_STOP_WORDS)
+
+positional_postings_lists = positional_postings_list_without_stop_words
 number_of_all_documents = len(read_data_from_file(DF_WITH_STOP_WORDS))
 
 
@@ -119,7 +121,7 @@ def load_vectors_list(file_name):
 
 
 def create_query_vector(query_string, remove_stop_words_flag, stem_flag):
-    query_tokens_dict = preprocess_query(query_string, remove_stop_words_flag, stem_flag)
+    query_tokens_dict = preprocess_query(query_string, "positional", remove_stop_words_flag, stem_flag)
 
     # term frequency - raw (tf-raw)
     query_term_freq_dict = {}
@@ -132,5 +134,8 @@ def create_query_vector(query_string, remove_stop_words_flag, stem_flag):
     return query_final_term_frequency
 
 
+vectors_without_stop_words = load_vectors_list(VECTORS_WITHOUT_STOP_WORDS_FILE)
+
 if __name__ == "__main__":
-    pass
+    v = create_vectors_list_from_postings_lists()
+    save_vectors_list(v)

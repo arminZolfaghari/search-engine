@@ -13,14 +13,11 @@ TRAINING_DATA_FILE = "./training_data.xlsx"
 TRAINING_DATA_JSON = "./training_data.json"
 
 
-
 def load_training_data(training_data_json):
     with open(training_data_json, 'r', encoding='utf-8') as fp:
         training_data_list = json.load(fp)
 
     return training_data_list
-
-
 
 
 def save_training_data(training_data_file, training_data_json):
@@ -59,5 +56,9 @@ TRAINING_DATA = load_training_data(TRAINING_DATA_JSON)
 # w2v_300d = create_w2v_model(1, 5, 3
 # 00, 0.03, cores - 1)
 # save_w2v_model(w2v_300d, "w2v_300d.model")
-model = load_w2v_model("w2v_300d.model")
-print((model.wv.most_similar('خبرگزار')))
+w2v_model = load_w2v_model("w2v_300d.model")
+
+if __name__ == "__main__":
+    print(len(TRAINING_DATA[0]))
+    print((w2v_model.wv.most_similar('خبرگزار')))
+    print(w2v_model.wv[0])
